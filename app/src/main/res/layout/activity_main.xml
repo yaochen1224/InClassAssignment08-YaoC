@@ -37,12 +37,18 @@
 
     <Button
         android:text="Register"
-        android:layout_width="wrap_content"
+        android:layout_width="159dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/editText3"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="33dp"
-        android:id="@+id/button"
-        android:onClick="register"
-        android:layout_weight="0.06" />
+        android:id="@+id/register"
+        android:onClick="register" />
+
+    <Button
+        android:text="log in"
+        android:layout_width="164dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/login"
+        android:onClick="login"/>
 </LinearLayout>

@@ -1,5 +1,6 @@
 package com.yaoc.inclassassignment08_yaoc;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -41,7 +42,9 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
+
     }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -56,11 +59,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void register(View view){
-        EditText emailField = (EditText)findViewById(R.id.email);
-        EditText passwordField = (EditText)findViewById(R.id.password);
+    public void register(View view) {
+        EditText emailField = (EditText) findViewById(R.id.email);
+        final String email = emailField.getText().toString();
+        EditText passwordField = (EditText) findViewById(R.id.password);
+        final String password = passwordField.getText().toString();
 
-        mAuth.createUserWithEmailAndPassword(emailField.getText().toString(), passwordField.getText().toString())
+        mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
@@ -70,16 +75,55 @@ public class MainActivity extends AppCompatActivity {
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
                         if (!task.isSuccessful()) {
-                            Toast.makeText(MainActivity.this, "Authentication failed.",
+                            Toast.makeText(MainActivity.this, "Registration failed.",
                                     Toast.LENGTH_SHORT).show();
                         } else {
                             Toast.makeText(MainActivity.this, "Registration successful!",
                                     Toast.LENGTH_SHORT).show();
+
+                            Intent intent = new Intent(MainActivity.this, Main2Activity.class);
+                            intent.putExtra("email", email);
+//                            intent.putExtra("password",password);
+                            startActivity(intent);
                         }
 
                         // ...
                     }
                 });
+    }
+
+    public void login(View view) {
+        EditText emailField = (EditText) findViewById(R.id.email);
+        final String email = emailField.getText().toString();
+        EditText passwordField = (EditText) findViewById(R.id.password);
+        final String password = passwordField.getText().toString();
+
+        Task<AuthResult> authResultTask = mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
+
+                        // If sign in fails, display a message to the user. If sign in succeeds
+                        // the auth state listener will be notified and logic to handle the
+                        // signed in user can be handled in the listener.
+                        if (!task.isSuccessful()) {
+                            Log.w(TAG, "signInWithEmail:failed", task.getException());
+                            Toast.makeText(MainActivity.this, R.string.auth_failed,
+                                    Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(MainActivity.this, "log in successful!",
+                                    Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(MainActivity.this, Main2Activity.class);
+                            intent.putExtra("email", email);
+//                            intent.putExtra("password",password);
+                            startActivity(intent);
+                        }
+
+                        // ...
+                    }
+                });
+
     }
 
 }

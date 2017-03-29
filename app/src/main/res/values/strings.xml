@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">InClassAssignment08-YaoC</string>
+    <string name="auth_failed">log in failed</string>
 </resources>
