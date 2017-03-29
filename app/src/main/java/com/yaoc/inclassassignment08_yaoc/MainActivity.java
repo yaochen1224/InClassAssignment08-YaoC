@@ -1,8 +1,8 @@
-package com.yaoc.inclassassignment08_yaoc;
+package com.example.android.inclassassignment08_yaoc;
 
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -18,6 +18,7 @@ public class MainActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
+
     private String TAG = "MainActivity";
 
     @Override
@@ -42,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
         };
 
     }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -56,11 +58,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void register(View view){
-        EditText emailField = (EditText)findViewById(R.id.email);
-        EditText passwordField = (EditText)findViewById(R.id.password);
+    public void register(View v){
 
-        mAuth.createUserWithEmailAndPassword(emailField.getText().toString(), passwordField.getText().toString())
+        EditText em = (EditText)findViewById(R.id.email);
+        String email = em.getText().toString();
+
+        EditText pw = (EditText)findViewById(R.id.password);
+        String password = pw.getText().toString();
+
+        mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
@@ -70,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
                         if (!task.isSuccessful()) {
-                            Toast.makeText(MainActivity.this, "Authentication failed.",
+                            Toast.makeText(MainActivity.this, "Registration unsuccessful!",
                                     Toast.LENGTH_SHORT).show();
                         } else {
                             Toast.makeText(MainActivity.this, "Registration successful!",
