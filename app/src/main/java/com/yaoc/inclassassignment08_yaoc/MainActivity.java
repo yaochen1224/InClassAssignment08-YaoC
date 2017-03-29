@@ -1,4 +1,4 @@
-package com.example.android.inclassassignment08_yaoc;
+package com.yaoc.inclassassignment08_yaoc;
 
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
