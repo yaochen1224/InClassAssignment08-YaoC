@@ -34,6 +34,9 @@ public class MainActivity extends AppCompatActivity {
                 if (user != null) {
                     // User is signed in
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
+                    Intent intent = new Intent(MainActivity.this, Main2Activity.class);
+                    startActivity(intent);
+
                 } else {
                     // User is signed out
                     Log.d(TAG, "onAuthStateChanged:signed_out");
@@ -44,6 +47,9 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
+
+
 
     @Override
     public void onStart() {
@@ -81,10 +87,10 @@ public class MainActivity extends AppCompatActivity {
                             Toast.makeText(MainActivity.this, "Registration successful!",
                                     Toast.LENGTH_SHORT).show();
 
-                            Intent intent = new Intent(MainActivity.this, Main2Activity.class);
-                            intent.putExtra("email", email);
-//                            intent.putExtra("password",password);
-                            startActivity(intent);
+//                            Intent intent = new Intent(MainActivity.this, Main2Activity.class);
+//                            intent.putExtra("email", email);
+////                            intent.putExtra("password",password);
+//                            startActivity(intent);
                         }
 
                         // ...
@@ -114,15 +120,16 @@ public class MainActivity extends AppCompatActivity {
                         } else {
                             Toast.makeText(MainActivity.this, "log in successful!",
                                     Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(MainActivity.this, Main2Activity.class);
-                            intent.putExtra("email", email);
-//                            intent.putExtra("password",password);
-                            startActivity(intent);
+//                            Intent intent = new Intent(MainActivity.this, Main2Activity.class);
+//                            intent.putExtra("email", email);
+////                            intent.putExtra("password",password);
+//                            startActivity(intent);
                         }
 
                         // ...
                     }
                 });
+
 
     }
 
