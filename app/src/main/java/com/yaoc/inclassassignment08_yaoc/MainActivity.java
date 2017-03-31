@@ -5,21 +5,26 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
-import android.widget.EditText;
-import android.widget.Toast;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.widget.TextView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class MainActivity extends AppCompatActivity {
-
+    private String TAG = "MainActivity";
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
-    private String TAG = "MainActivity";
+    private FirebaseDatabase database = FirebaseDatabase.getInstance();
+    private DatabaseReference myRef;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,22 +39,78 @@ public class MainActivity extends AppCompatActivity {
                 if (user != null) {
                     // User is signed in
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
-                    Intent intent = new Intent(MainActivity.this, Main2Activity.class);
-                    startActivity(intent);
+                    myRef = database.getReference(user.getUid());
+                    displayEvent();
 
                 } else {
                     // User is signed out
                     Log.d(TAG, "onAuthStateChanged:signed_out");
+                    Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                    finish();
                 }
                 // ...
             }
         };
-
-
     }
 
+    public void displayEvent(){
+        TextView nameDisplay = (TextView)findViewById(R.id.nameDisplay);
+        TextView ageDisplay = (TextView)findViewById(R.id.ageDisplay);
+        TextView genderDisplay = (TextView)findViewById(R.id.genderDisplay);
 
+        eventListen("name",nameDisplay);
+        eventListen("age", ageDisplay);
+        eventListen("gender", genderDisplay);
+    }
 
+    public void eventListen(String key, final TextView displayView){
+        // Read from the database
+        myRef.child(key).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // This method is called once with the initial value and again
+                // whenever data at this location is updated.
+                String value = dataSnapshot.getValue(String.class);
+
+                if (value != null) {
+                    displayView.setText(value);
+                } else {
+                    displayView.setText("Not set");
+                }
+
+                Log.d(TAG, "Value is: " + value);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                Log.w(TAG, "Failed to read value.", error.toException());
+            }
+        });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.logout:
+                mAuth.signOut();
+                return true;
+            case R.id.editProfile:
+                startActivity(new Intent(MainActivity.this, EditActivity.class));
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
     @Override
     public void onStart() {
@@ -65,72 +126,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void register(View view) {
-        EditText emailField = (EditText) findViewById(R.id.email);
-        final String email = emailField.getText().toString();
-        EditText passwordField = (EditText) findViewById(R.id.password);
-        final String password = passwordField.getText().toString();
 
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
-
-                        // If sign in fails, display a message to the user. If sign in succeeds
-                        // the auth state listener will be notified and logic to handle the
-                        // signed in user can be handled in the listener.
-                        if (!task.isSuccessful()) {
-                            Toast.makeText(MainActivity.this, "Registration failed.",
-                                    Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(MainActivity.this, "Registration successful!",
-                                    Toast.LENGTH_SHORT).show();
-
-//                            Intent intent = new Intent(MainActivity.this, Main2Activity.class);
-//                            intent.putExtra("email", email);
-////                            intent.putExtra("password",password);
-//                            startActivity(intent);
-                        }
-
-                        // ...
-                    }
-                });
-    }
-
-    public void login(View view) {
-        EditText emailField = (EditText) findViewById(R.id.email);
-        final String email = emailField.getText().toString();
-        EditText passwordField = (EditText) findViewById(R.id.password);
-        final String password = passwordField.getText().toString();
-
-        Task<AuthResult> authResultTask = mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
-
-                        // If sign in fails, display a message to the user. If sign in succeeds
-                        // the auth state listener will be notified and logic to handle the
-                        // signed in user can be handled in the listener.
-                        if (!task.isSuccessful()) {
-                            Log.w(TAG, "signInWithEmail:failed", task.getException());
-                            Toast.makeText(MainActivity.this, R.string.auth_failed,
-                                    Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(MainActivity.this, "log in successful!",
-                                    Toast.LENGTH_SHORT).show();
-//                            Intent intent = new Intent(MainActivity.this, Main2Activity.class);
-//                            intent.putExtra("email", email);
-////                            intent.putExtra("password",password);
-//                            startActivity(intent);
-                        }
-
-                        // ...
-                    }
-                });
-
-
-    }
 
 }
+

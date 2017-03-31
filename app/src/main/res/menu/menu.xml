@@ -1,7 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/editProfile"
+        android:title="edit"
+        android:icon="@drawable/profile"
+        app:showAsAction="ifRoom"/>
+
     <item android:id="@+id/logout"
         android:title="log out"
-        app:showAsAction="never"/>
+        android:icon="@drawable/logout"
+        app:showAsAction="ifRoom"/>
+
 </menu>
